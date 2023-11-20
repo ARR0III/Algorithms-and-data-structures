@@ -11,6 +11,14 @@ int main(void){
   while ((byte = getchar()) != EOF) {
     if (tmp == byte) {
       stat++;
+
+      if (stat == 0xFFFFFFFF) {
+        fprintf(stdout, "%u", stat);
+        putchar(tmp);
+        tmp = byte;
+        stat = 0;
+      }
+
       continue;
     }
     else {
