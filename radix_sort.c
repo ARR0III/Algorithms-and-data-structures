@@ -6,6 +6,7 @@
 void radix_sort(uint8_t * data, size_t size) {
   size_t i, ps0, ps1;
 
+  uint8_t   k = 0;
   uint8_t   r;
   uint8_t * p[2];
 
@@ -21,6 +22,37 @@ void radix_sort(uint8_t * data, size_t size) {
   }
 
   r = 1;
+
+  /* optimization ??? */
+  /* search and set high bit in numbers array */
+  for (i = 0; i < size; i++) {
+    k = k | data[i];
+  }
+
+  /* optimization ??? */
+  /* search first 1 bit in number */
+  i = 8 - 1;
+
+  while (i >= 0) {
+    if ((k >> i) & 1) {
+      break;
+    }
+
+    if (i == 0) {
+      break;
+    }
+
+    i--;
+  }
+
+  /* optimization ??? */
+  /* k = (width number bits) - (position 1 bit in number) */
+  k = 8 - (8 - (i + 1));
+
+  printf("Original algoritm     O(N * r)         = %d\n"
+         "Optimization algoritm O(N * k + N + k) = %d\n",
+          size * 8,
+          size * k + size + k);
 
   while (1) {
     ps0 = 0;
@@ -42,11 +74,12 @@ void radix_sort(uint8_t * data, size_t size) {
 	memcpy(data,       p[1], ps1);
 	memcpy(data + ps1, p[0], ps0);
 
-    if (r & 0x80) {
+    if ((k == 0) || (r & 0x80)) {
       break;
     }
 
     r <<= 1;
+    k--;
   }
 
   free(p[0]);
@@ -60,7 +93,7 @@ int main(void) {
   radix_sort(&d[0], 20);
 
   for (i = 0; i < 20; i++)
-    printf("%d\t", d[i]);
+    printf("%3d ", d[i]);
 
   printf("\n");
 
