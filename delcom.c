@@ -38,17 +38,13 @@ int str_read(FILE * f, char * str, int bounder) {
 
 int main(int argc, char * argv[]) {
 
-  FILE *fin;
-  int   i, read;
+  FILE  *fin;
+  int    i, read;
 
-  int   pos_begin = 0;
-  int   pos_end   = 0;
-  int   length    = 0;
+  int    comment = FALSE;
+  size_t strings = 0;
 
-  int   comment   = FALSE;
-  int   strings = 0;
-
-  char  data[BLOCK_SIZE] = {0};
+  char   data[BLOCK_SIZE] = {0};
 
   if (argc != 2) {
     fprintf(stderr, "[!] Enter: %s [filename]\n", argv[0]);
@@ -63,9 +59,6 @@ int main(int argc, char * argv[]) {
   }
 
   while (1) {
-    pos_begin = 0;
-    pos_end   = 0;
-
     read = str_read(fin, data, BLOCK_SIZE);
     
     if (read == 0) break;
@@ -73,63 +66,39 @@ int main(int argc, char * argv[]) {
     strings++;
 
     if (read == BLOCK_SIZE) {
-      fprintf(stderr, "[!] %8d: string length more %d.\n", strings, BLOCK_SIZE);
+      fprintf(stderr, "[!] %8d: string length more %d\n", strings, BLOCK_SIZE);
       break;
     }
 
    /*
-    * find bounders comment
+    * find bounders the comment in string
     */
     for (i = 0; i < read-1; i++) {
       if (comment == FALSE && data[i] == '/' && data[i+1] == '*') {
-        pos_begin = i;
-        length    = 2;
-        comment   = TRUE;
+        comment = TRUE;
+        i++;
         continue;
       }
 
       if (comment == TRUE && data[i] == '*' && data[i+1] == '/') {
-        pos_end = i+1;
         comment = FALSE;
-        length += 2;
-        break;
-      }
-
-      if (comment) length++;
-    }
-
-    if (comment) { /* in comment */
-      continue;
-      length = 0;
-    }
-
-    if (length >= 4) {
-      fwrite(data, 1, pos_begin, stdout);
-      fwrite(data + pos_end + 1, 1, read - pos_end - 1, stdout);
-    }
-    else {
-      fwrite(data, 1, read, stdout);
-    }
-
-    length = 0;
-
-    /**************************************************************************
-    real comment found ???
-
-    if ((pos_end - pos_begin) >= 3) {
-      if (data[pos_begin + 1] == '*' && data[pos_end - 1] == '*') {
-        fwrite(data, 1, pos_begin ? pos_begin - 1 : 0, stdout);
-        fwrite(data + pos_end + 1, 1, read - pos_end, stdout);
-
+        i++;
         continue;
       }
+
+      if (!comment) {
+        putchar(data[i]);
+      }
     }
 
-    write full buffer --> comment not found
-    fwrite(data, 1, read, stdout);
-
-    **************************************************************************/
+    if (!comment) {
+      putchar('\n');
+    }
   }
+
+  putchar('\n');
+
+  fclose(fin);
 
   return 0;
 }
