@@ -28,7 +28,23 @@ void list_burn(list ** lst) {
   }
 }
 
-void list_rev_print(list ** lst) {
+void list_reverse(list ** lst) {
+  list *tmp, *fst;
+
+  fst = *lst;
+  tmp = (*lst)->next;
+
+  (*lst)->next = NULL;
+
+  while (tmp) {
+    *lst = tmp;
+    tmp = tmp->next;
+    (*lst)->next = fst;
+    fst = *lst;
+  }
+}
+
+void list_print(list ** lst) {
   list * tmp = *lst;
 
   while (tmp) {
@@ -46,7 +62,8 @@ int main (void) {
     list_push(&begin, data);
   }
 
-  list_rev_print(&begin);
+  list_reverse(&begin);
+  list_print(&begin);
   list_burn(&begin);
 
   return 0;
