@@ -4,8 +4,8 @@
 #define FALSE 0
 #define TRUE  1
 
-size_t str_len(const char * str) {
-  size_t i = 0;
+int str_len(const char * str) {
+  int i = 0;
 
   while(str[i]) i++;
 
@@ -45,16 +45,16 @@ int str_cmp(const char * a, const char * b) {
   return i;
 }
 
-void swap(size_t * a, size_t * b) {
-  size_t tmp = *a;
+void swap(int * a, int * b) {
+  int tmp = *a;
   
   *a = *b;
   *b = tmp;
 }
 
-void sort(char ** arr_str, size_t * arr_len, size_t size) {
-  size_t i, j;
-  size_t mp;
+void sort(char ** arr_str, int * arr_len, int size) {
+  int i, j;
+  int mp;
 
   char * tmp;
 
@@ -77,12 +77,10 @@ void sort(char ** arr_str, size_t * arr_len, size_t size) {
 }
 
 /* toporno i ne krasivo schtob ego; pervoe chto proschlo v golovu */
-void str_sort(char ** arr_str, size_t qu) {
-  size_t i, j, k;
-  size_t begin, end, count, len;
+void str_sort(char ** arr_str, int qu) {
 
-  char   * tmp;
-  size_t * arr_len = (size_t *)malloc(sizeof(size_t) * qu);
+  int   i;
+  int * arr_len = (int *)malloc(sizeof(int) * qu);
 
 /* length all string from array pointers */
   for (i = 0; i < qu; i++) {
@@ -92,52 +90,22 @@ void str_sort(char ** arr_str, size_t qu) {
 /* sort length string and swap pointers */
   sort(arr_str, arr_len, qu);
 
-/* sort strings */
-
-  begin = 0;
-  end   = 0;
-
-  while(begin < qu) {
-    for (i = begin; i < qu-1; i++) {
-      if (arr_len[i+1] > arr_len[begin]) {
-        end = i;
-        break;
-      }
-    }
-
-    if (begin == end) {
-      begin++;
-      continue;
-    }
-
-    len   = arr_len[end];
-    count = end - begin;
-
-/* recursive sort string */
-
-    begin = end+1;
+/* compire and sort strings */
+  for (i = 0; i < qu-1; i++) {
+    arr_len[i] = str_cmp(arr_str[i], arr_str[i+1]);
   }
+
+  arr_len[qu-1] = -arr_len[qu-2];
+
+  sort(arr_str, arr_len, qu);
 
   free(arr_len);
 }
 
 int main(int argc, char * argv[]) {
 
-  char   c;
   int    i, n;
   char * strv[10];
-
-  for (i = 1; i < argc-1; i++) {
-    n = str_cmp(argv[i], argv[i+1]);
-
-    if (n == 0) c =  0;
-    if (n <  0) c = '<';
-    if (n >  0) c = '>';
-
-    printf("%s %c %s\n", argv[i], c ? c : '=', argv[i+1]);
-  }
-
-  return 0;
 
   if (argc == 1) {
     printf("Enter strings!\n");
