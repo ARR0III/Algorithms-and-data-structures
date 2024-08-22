@@ -12,6 +12,39 @@ size_t str_len(const char * str) {
   return i;
 }
 
+int str_cmp(const char * a, const char * b) {
+  int i = 0;
+  const char *aa = a;
+  const char *bb = b;
+
+  while (*aa && *bb) {
+    if (*aa ^ *bb) {
+      i = *aa - *bb;
+      break;
+    }
+
+    aa++;
+    bb++;
+  }
+
+  if (i) return i;
+
+  if (*aa) {
+    while (*aa) {
+      aa++;
+      i++;
+    }
+    return i;
+  }
+
+  while (*bb) {
+    bb++;
+    i--;
+  }
+
+  return i;
+}
+
 void swap(size_t * a, size_t * b) {
   size_t tmp = *a;
   
@@ -45,12 +78,11 @@ void sort(char ** arr_str, size_t * arr_len, size_t size) {
 
 /* toporno i ne krasivo schtob ego; pervoe chto proschlo v golovu */
 void str_sort(char ** arr_str, size_t qu) {
-  size_t i, j, p, k;
-  size_t begin, end;
-  size_t * arr_len = (size_t *)malloc(sizeof(size_t) * qu);
+  size_t i, j, k;
+  size_t begin, end, count, len;
 
-  size_t len;
-  int crash_sort = FALSE;
+  char   * tmp;
+  size_t * arr_len = (size_t *)malloc(sizeof(size_t) * qu);
 
 /* length all string from array pointers */
   for (i = 0; i < qu; i++) {
@@ -78,17 +110,12 @@ void str_sort(char ** arr_str, size_t qu) {
       continue;
     }
 
-    if (begin < end) {
-      len = arr_len[end];
+    len   = arr_len[end];
+    count = end - begin;
 
-      for (j = 0; j < len; j++) {
-        for (k = begin; k < end; k++) {
-          
-        }
-      }
-    }
+/* recursive sort string */
 
-    begin = begin + end;
+    begin = end+1;
   }
 
   free(arr_len);
@@ -96,8 +123,21 @@ void str_sort(char ** arr_str, size_t qu) {
 
 int main(int argc, char * argv[]) {
 
-  int i, n;
+  char   c;
+  int    i, n;
   char * strv[10];
+
+  for (i = 1; i < argc-1; i++) {
+    n = str_cmp(argv[i], argv[i+1]);
+
+    if (n == 0) c =  0;
+    if (n <  0) c = '<';
+    if (n >  0) c = '>';
+
+    printf("%s %c %s\n", argv[i], c ? c : '=', argv[i+1]);
+  }
+
+  return 0;
 
   if (argc == 1) {
     printf("Enter strings!\n");
