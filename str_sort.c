@@ -18,7 +18,7 @@ int str_cmp(const char * a, const char * b) {
   const char *bb = b;
 
   while (*aa && *bb) {
-    if (*aa ^ *bb) {
+    if (*aa != *bb) {
       i = *aa - *bb;
       break;
     }
@@ -27,7 +27,7 @@ int str_cmp(const char * a, const char * b) {
     bb++;
   }
 
-  if (i) return i;
+  if (i != 0) return i;
 
   if (*aa) {
     while (*aa) {
@@ -76,6 +76,18 @@ void sort(char ** arr_str, int * arr_len, int size) {
   }
 }
 
+int sort_complete(int * arr_len, int size) {
+  int i;
+
+  for (i = 0; i < size-1; i++) {
+    if (arr_len[i] > arr_len[i+1]) {
+      return FALSE;
+    }
+  }
+
+  return TRUE;
+}
+
 /* toporno i ne krasivo schtob ego; pervoe chto proschlo v golovu */
 void str_sort(char ** arr_str, int qu) {
 
@@ -91,17 +103,22 @@ void str_sort(char ** arr_str, int qu) {
   sort(arr_str, arr_len, qu);
 
 /* compire and sort strings */
-  for (i = 0; i < qu-1; i++) {
-    arr_len[i] = str_cmp(arr_str[i], arr_str[i+1]);
-  }
+  do {
+    for (i = 0; i < qu-1; i++) {
+      arr_len[i] = str_cmp(arr_str[i], arr_str[i+1]);
+      printf("---- %d ----\n", arr_len[i]);
+    }
 
-  arr_len[qu-1] = -arr_len[qu-2];
+    arr_len[qu-1] = -arr_len[qu-2];
+    printf("---- %d ----\n", arr_len[qu-1]);
 
-  sort(arr_str, arr_len, qu);
+    sort(arr_str, arr_len, qu);
+  } while (sort_complete(arr_len, qu));
 
   free(arr_len);
 }
 
+/* gcc -Wall -O3 str_sort.c -o str_sort */
 int main(int argc, char * argv[]) {
 
   int    i, n;
