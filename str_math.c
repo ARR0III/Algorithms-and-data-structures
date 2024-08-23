@@ -44,7 +44,7 @@ void stack_pop(stack_t ** stack, int * number) {
 #define  TRUE   1
 
 /*
-  ./str_math "434693463762395724962432 +-+-++++****+++-/+-+/++"  --> 328
+  ./str_math "98765432123456789+*+/++*+-+*+-+++" --> 65
 */
 
 int main(int argc, char * argv[]) {
@@ -90,18 +90,18 @@ int main(int argc, char * argv[]) {
 
       switch(str[i]) {
         case '+':
-          tmp = number + stack->number;
-          printf(">>(%8d + %d) = %d\n", number, stack->number, tmp);
+          tmp = stack->number + number;
+          printf(">>(%d + %8d) = %d\n", stack->number, number, tmp);
           stack->number = tmp;
           break;
         case '-':
-          tmp = number - stack->number;
-          printf(">>(%8d - %d) = %d\n", number, stack->number, tmp);
+          tmp = stack->number - number;
+          printf(">>(%d - %8d) = %d\n", stack->number, number, tmp);
           stack->number = tmp;
           break;
         case '*':
-          tmp = number * stack->number;
-          printf(">>(%8d * %d) = %d\n", number, stack->number, tmp);
+          tmp = stack->number * number;
+          printf(">>(%d * %8d) = %d\n", stack->number, number, tmp);
           stack->number = tmp;
           break;
         case '/':
@@ -110,8 +110,8 @@ int main(int argc, char * argv[]) {
             printf(">>Div by zero!\n");
             exit(1);
           }
-          tmp = number / stack->number;
-          printf(">>(%8d / %d) = %d\n", number, stack->number, tmp);
+          tmp = stack->number / number;
+          printf(">>(%d / %8d) = %d\n", stack->number, number, tmp);
           stack->number = tmp;
           break;
       }
