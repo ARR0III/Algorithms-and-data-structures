@@ -2,16 +2,18 @@
 #include <stdlib.h>
 #include <string.h>
 
+#define DEBUG 1
+
 #define FALSE         0
 #define TRUE          1
 
-#define STACK_SIZE 1024
+#define STACK_SIZE (4)
 
 typedef struct stack {
-  int number[STACK_SIZE];
-  int counter;
-  struct stack * prev;
+  int    number[STACK_SIZE];
+  size_t counter;
 
+  struct stack * prev;
 } stack_t;
 
 void stack_free(stack_t ** stack) {
@@ -36,15 +38,24 @@ void stack_new(stack_t ** stack, int number) {
   tmp->counter   = 1;
   tmp->prev      = *stack;
   *stack         = tmp;
+#ifdef DEBUG
+    printf("[O_DEBUG] addr:%p; data:%d; counter:%d\n",
+           &((*stack)->number[0]), number, (*stack)->counter);
+#endif
 }
 
 void stack_push(stack_t ** stack, int number) {
   if (*stack && (*stack)->counter < STACK_SIZE) {
     (*stack)->number[(*stack)->counter] = number;
+#ifdef DEBUG
+    printf("[O_DEBUG] addr:%p; data:%d; counter:%d\n",
+           (char*)((*stack)->number) + (*stack)->counter, number,
+                   (*stack)->counter+1);
+#endif
     (*stack)->counter++;
     return;
   }
-    
+
   stack_new(stack, number);
 }
 
@@ -54,14 +65,19 @@ void stack_pop(stack_t ** stack, int * number) {
   if (NULL == *stack) return;
 
   if (0 == (*stack)->counter) {
-    tmp = *stack;
-    *stack  = (*stack)->prev;
-    free(tmp);
+    tmp = (*stack)->prev;
+    free(*stack);
+    *stack = tmp;
   }
-  
+
   if (NULL == *stack) return;
 
   *number = (*stack)->number[(*stack)->counter-1];
+#ifdef DEBUG
+    printf("[O_DEBUG] addr:%p; data:%d; counter:%d\n",
+           (char*)((*stack)->number) + (*stack)->counter - 1, *number,
+                   (*stack)->counter-1);
+#endif
   (*stack)->counter--;
 }
 
