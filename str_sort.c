@@ -4,14 +4,6 @@
 #define FALSE 0
 #define TRUE  1
 
-int str_len(const char * str) {
-  int i = 0;
-
-  while(str[i]) i++;
-
-  return i;
-}
-
 int str_cmp(const char * a, const char * b) {
   int i = 0;
   const char *aa = a;
@@ -45,116 +37,50 @@ int str_cmp(const char * a, const char * b) {
   return i;
 }
 
-void swap(int * a, int * b) {
-  int tmp = *a;
-  
-  *a = *b;
-  *b = tmp;
-}
-
-void sort(char ** arr_str, int * arr_len, int size) {
-  int i, j;
-  int mp;
-
+void str_sort(char ** arr_str, int qu) {
+  int    i, swp;
   char * tmp;
 
-  for (i = 0; i < size-1; i++) {
-    mp = i;
+  while (1) {
+    swp = FALSE;
+    i   = 0;
 
-    for (j = i+1; j < size; j++) {
-      if (arr_len[j] < arr_len[mp])
-        mp = j;
+    while (i < qu-1) {
+      if (str_cmp(arr_str[i], arr_str[i+1]) > 0) {
+        tmp          = arr_str[i];
+        arr_str[i]   = arr_str[i+1];
+        arr_str[i+1] = tmp;
+        swp = TRUE;
+      }
+      i++;
     }
 
-    if (mp > i) {
-      swap(&arr_len[i], &arr_len[mp]);
+    qu--;
 
-      tmp         = arr_str[i];
-      arr_str[i]  = arr_str[mp];
-      arr_str[mp] = tmp;
-    }
+    if (!swp) break;
   }
-}
-
-int sort_complete(int * arr_len, int size) {
-  int i;
-
-  for (i = 0; i < size-1; i++) {
-    if (arr_len[i] > arr_len[i+1]) {
-      return FALSE;
-    }
-  }
-
-  return TRUE;
-}
-
-/* toporno i ne krasivo schtob ego; pervoe chto proschlo v golovu */
-void str_sort(char ** arr_str, int qu) {
-
-  int   i;
-  int * arr_len = (int *)malloc(sizeof(int) * qu);
-
-/* length all string from array pointers */
-  for (i = 0; i < qu; i++) {
-    arr_len[i] = str_len(arr_str[i]);
-  }
-
-/* sort length string and swap pointers */
-  sort(arr_str, arr_len, qu);
-
-/* compire and sort strings */
-  do {
-    for (i = 0; i < qu-1; i++) {
-      arr_len[i] = str_cmp(arr_str[i], arr_str[i+1]);
-      printf("---- %d ----\n", arr_len[i]);
-    }
-
-    arr_len[qu-1] = -arr_len[qu-2];
-    printf("---- %d ----\n", arr_len[qu-1]);
-
-    sort(arr_str, arr_len, qu);
-  } while (sort_complete(arr_len, qu));
-
-  free(arr_len);
 }
 
 /* gcc -Wall -O3 str_sort.c -o str_sort */
 int main(int argc, char * argv[]) {
 
-  int    i, n;
-  char * strv[10];
+  int i;
 
-  if (argc == 1) {
+  if (argc < 2) {
     printf("Enter strings!\n");
     return 1;
   }
 
-  i = 0;
-  while (argv[i+1] && i < 10) {
-    strv[i] = argv[i+1];
-    i++;
-  }
+  str_sort(&argv[1], argc-1);
 
-  n = i;
-
-  str_sort(strv, i);
-
-  i = 0;
+  i = 1;
   while (1) {
-    if (i == n) break;
+    if (i == argc) break;
 
-    printf("%s\n", strv[i]);
+    printf("%s\n", argv[i]);
     i++;
   }
 
   return 0;
 }
-
-
-
-
-
-
-
-
 
