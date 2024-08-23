@@ -2,10 +2,16 @@
 #include <stdlib.h>
 #include <string.h>
 
-typedef struct stack {
-  int number;
-  struct stack * prev;
+#define FALSE         0
+#define TRUE          1
 
+#define STACK_SIZE 1000
+
+typedef struct stack {
+  int    number[STACK_SIZE];
+  size_t counter;
+
+  struct stack * prev;
 } stack_t;
 
 void stack_free(stack_t ** stack) {
@@ -18,30 +24,60 @@ void stack_free(stack_t ** stack) {
   }
 }
 
-void stack_push(stack_t ** stack, int number) {
+void stack_new(stack_t ** stack, int number) {
   stack_t * tmp = (stack_t *)malloc(sizeof(stack_t));
 
-  if (!tmp)
+  if (NULL == tmp) {
+    stack_free(stack);
     exit(1);
+  }
 
-  tmp->number = number;
-  tmp->prev = *stack;
-  *stack = tmp;
+  tmp->number[0] = number;
+  tmp->counter   = 1;
+  tmp->prev      = *stack;
+  *stack         = tmp;
+#ifdef DEBUG
+    printf("[I_DEBUG] addr:%p; data:%d; counter:%d\n",
+           &((*stack)->number[0]), number, (*stack)->counter);
+#endif
+}
+
+void stack_push(stack_t ** stack, int number) {
+  if (*stack && (*stack)->counter < STACK_SIZE) {
+    (*stack)->number[(*stack)->counter] = number;
+#ifdef DEBUG
+    printf("[I_DEBUG] addr:%p; data:%d; counter:%d\n",
+           (char*)((*stack)->number) + (*stack)->counter, number,
+                   (*stack)->counter+1);
+#endif
+    (*stack)->counter++;
+    return;
+  }
+
+  stack_new(stack, number);
 }
 
 void stack_pop(stack_t ** stack, int * number) {
+  stack_t * tmp;
+
   if (NULL == *stack) return;
 
-  stack_t * tmp = *stack;
+  if (0 == (*stack)->counter) {
+    tmp = (*stack)->prev;
+    free(*stack);
+    *stack = tmp;
+  }
 
-  *number = (*stack)->number;
-  *stack = (*stack)->prev;
+  if (NULL == *stack) return;
 
-  free(tmp);
+  *number = (*stack)->number[(*stack)->counter-1];
+#ifdef DEBUG
+    printf("[O_DEBUG] addr:%p; data:%d; counter:%d\n",
+           (char*)((*stack)->number) + (*stack)->counter - 1, *number,
+                   (*stack)->counter-1);
+#endif
+  (*stack)->counter--;
 }
-
-#define  FALSE  0
-#define  TRUE   1
 
 /*
   ./str_math "98765432123456789+*+/++*+-+*+-+++" --> 65
@@ -51,11 +87,10 @@ int main(int argc, char * argv[]) {
 
   stack_t * stack = NULL;
 
-  int i;
-  int len;
-  int number = 0;
-  int tmp;
+  int number;
+  int i, len, result;
 
+  int    tmp;
   char * str = argv[1];
 
   if (argc < 2) {
@@ -77,26 +112,28 @@ int main(int argc, char * argv[]) {
 
     if (str[i] == '+' || str[i] == '-' || str[i] == '*' || str[i] == '/') {
       if (!stack) {
-        printf(">>Stack are enpty!\n");
+        printf(">>Stack are empty!\n");
         exit(1);
       }
 
       stack_pop(&stack, &number);
 
       if (!stack) {
-        printf(">>Stack are enpty!\n");
+        printf(">>Stack are empty!\n");
         exit(1);
       }
 
+      stack_pop(&stack, &tmp);
+
       switch(str[i]) {
         case '+':
-          tmp = stack->number + number;
+          result = tmp + number;
           break;
         case '-':
-          tmp = stack->number - number;
+          result = tmp - number;
           break;
         case '*':
-          tmp = stack->number * number;
+          result = tmp * number;
           break;
         case '/':
           if (number == 0) {
@@ -104,37 +141,24 @@ int main(int argc, char * argv[]) {
             printf(">>Div by zero!\n");
             exit(1);
           }
-          tmp = stack->number / number;
+          result = tmp / number;
           break;
       }
 
-      printf(">>(%d %c %8d) = %d\n", stack->number, (char)str[i], number, tmp);
-      stack->number = tmp;
+      printf(">>(%d %c %8d) = %d\n", tmp, (char)str[i], number, result);
+      stack_push(&stack, result);
     }
   }
 
   if (!stack) {
-    printf(">>Stack are enpty!\n");
+    printf(">>Stack are empty!\n");
     exit(1);
   }
 
-  printf(">>(%s) = %d\n", str, stack->number);
-
+  stack_pop(&stack, &tmp);
+  printf(">>(%s) = %d\n", str, tmp);
   stack_free(&stack);
 
   return 0;
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
 
