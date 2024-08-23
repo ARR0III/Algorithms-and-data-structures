@@ -91,18 +91,12 @@ int main(int argc, char * argv[]) {
       switch(str[i]) {
         case '+':
           tmp = stack->number + number;
-          printf(">>(%d + %8d) = %d\n", stack->number, number, tmp);
-          stack->number = tmp;
           break;
         case '-':
           tmp = stack->number - number;
-          printf(">>(%d - %8d) = %d\n", stack->number, number, tmp);
-          stack->number = tmp;
           break;
         case '*':
           tmp = stack->number * number;
-          printf(">>(%d * %8d) = %d\n", stack->number, number, tmp);
-          stack->number = tmp;
           break;
         case '/':
           if (number == 0) {
@@ -111,10 +105,11 @@ int main(int argc, char * argv[]) {
             exit(1);
           }
           tmp = stack->number / number;
-          printf(">>(%d / %8d) = %d\n", stack->number, number, tmp);
-          stack->number = tmp;
           break;
       }
+
+      printf(">>(%d %c %8d) = %d\n", stack->number, (char)str[i], number, tmp);
+      stack->number = tmp;
     }
   }
 
