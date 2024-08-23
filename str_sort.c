@@ -61,7 +61,7 @@ void stack_pop(stack_t ** stack, int * number) {
   
   if (NULL == *stack) return;
 
-  *number = (*stack)->number[(*stack)->counter];
+  *number = (*stack)->number[(*stack)->counter-1];
   (*stack)->counter--;
 }
 
@@ -76,7 +76,7 @@ int main(int argc, char * argv[]) {
   int number = 0;
   int i, len, result;
 
-  int  * tmp = NULL;
+  int  * tmp;
   char * str = argv[1];
 
   if (argc < 2) {
@@ -109,7 +109,7 @@ int main(int argc, char * argv[]) {
         exit(1);
       }
 
-      tmp = &(stack->number[stack->counter]);
+      tmp = &(stack->number[stack->counter-1]);
 
       switch(str[i]) {
         case '+':
