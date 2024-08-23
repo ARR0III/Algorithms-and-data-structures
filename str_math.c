@@ -44,7 +44,7 @@ void stack_pop(stack_t ** stack, int * number) {
 #define  TRUE   1
 
 /*
-  ./str_math "4886739958471634+++/*+-**++-++"  --> 911
+  ./str_math "434693463762395724962432 +-+-++++****+++-/+-+/++"  --> 328
 */
 
 int main(int argc, char * argv[]) {
@@ -91,17 +91,17 @@ int main(int argc, char * argv[]) {
       switch(str[i]) {
         case '+':
           tmp = number + stack->number;
-          printf(">>(%d + %d) = %d\n", number, stack->number, tmp);
+          printf(">>(%8d + %d) = %d\n", number, stack->number, tmp);
           stack->number = tmp;
           break;
         case '-':
           tmp = number - stack->number;
-          printf(">>(%d - %d) = %d\n", number, stack->number, tmp);
+          printf(">>(%8d - %d) = %d\n", number, stack->number, tmp);
           stack->number = tmp;
           break;
         case '*':
           tmp = number * stack->number;
-          printf(">>(%d * %d) = %d\n", number, stack->number, tmp);
+          printf(">>(%8d * %d) = %d\n", number, stack->number, tmp);
           stack->number = tmp;
           break;
         case '/':
@@ -111,7 +111,7 @@ int main(int argc, char * argv[]) {
             exit(1);
           }
           tmp = number / stack->number;
-          printf(">>(%d / %d) = %d\n", number, stack->number, tmp);
+          printf(">>(%8d / %d) = %d\n", number, stack->number, tmp);
           stack->number = tmp;
           break;
       }
