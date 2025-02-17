@@ -4,37 +4,18 @@
 #define FALSE 0
 #define TRUE  1
 
-int str_cmp(const char * a, const char * b) {
-  int i = 0;
-  const char *aa = a;
-  const char *bb = b;
-
-  while (*aa && *bb) {
-    if (*aa != *bb) {
-      i = *aa - *bb;
+int str_cmp(const char *l, const char *r) {
+  register int t;
+  
+  while(1) {
+    if (t = *l - *r)
       break;
-    }
+    if (!*l)
+      break;
 
-    aa++;
-    bb++;
+    l++, r++;
   }
-
-  if (i != 0) return i;
-
-  if (*aa) {
-    while (*aa) {
-      aa++;
-      i++;
-    }
-    return i;
-  }
-
-  while (*bb) {
-    bb++;
-    i--;
-  }
-
-  return i;
+  return t;
 }
 
 void str_sort(char ** arr_str, int qu) {
